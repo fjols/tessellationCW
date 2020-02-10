@@ -101,23 +101,25 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 model = glm::mat4(1.0f);
 	    shader.use();
-	    shader.setMat4("projection", projection);
-		shader.setMat4("view", view);
-		shader.setMat4("model", model);
-		shader.setVec3("viewPos", camera.Position);
-		shader.setVec3("eyePos", camera.Position);
+	    shader.setMat4("projection", projection); // Projection matrix.
+		shader.setMat4("view", view); // View matrix.
+		shader.setMat4("model", model); // Model matrix.
+		shader.setVec3("viewPos", camera.Position); // Position of the camera.
+		shader.setVec3("eyePos", camera.Position); // Position of the camera.
 
 		//light properties
-		shader.setVec3("dirLight.direction", dirLightPos);
-		shader.setVec3("dirLight.ambient", 1.0f, 1.0f, 0.0f);
-		shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 0.0f);
-		shader.setVec3("dirLight.specular", 1.0f, 1.0f, 0.0f);
+		shader.setVec3("dirLight.direction", dirLightPos); // Direction of the light.
+		shader.setVec3("dirLight.ambient", 1.0f, 1.0f, 0.0f); // Ambient lighting.
+		shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 0.0f); // Diffuse lighting.
+		shader.setVec3("dirLight.specular", 1.0f, 1.0f, 0.0f); // Specular lighting.
 		//material properties
-		shader.setVec3("mat.ambient", 1.0f, 1.0f, 0.0f);
-		shader.setVec3("mat.diffuse", 1.0f, 1.0f, 0.0f);
-		shader.setVec3("mat.specular", 1.0f, 1.0f, 0.0f);
-		shader.setFloat("mat.shininess", 0.9f);
+		shader.setVec3("mat.ambient", 0.0f, 1.0f, 0.0f); // Ambient colour of the material.
+		shader.setVec3("mat.diffuse", 0.0f, 1.0f, 0.0f); // Diffuse colour of the material.
+		shader.setVec3("mat.specular", 0.0f, 1.0f, 0.0f); // Specular colour of the material.
+		shader.setFloat("mat.shininess", 0.45f); // Shininess of the material.
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) // If the L button is pressed, change polygon mode to GL_FILL from GL_LINE.
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_PATCHES, 0, vertices.size() / 3);
 		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
 		  camera.printCameraCoords();
