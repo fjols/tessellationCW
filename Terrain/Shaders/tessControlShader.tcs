@@ -1,0 +1,71 @@
+// first step of tesselation shader
+// tesselation control shader add/deletes control points and determines the tesselatation level
+// patch has three control points here (three vertices for each triangle)
+
+
+#version 450 core
+layout (vertices =3) out;
+
+
+// vectors stored as arrays - each patch has three vertices, each with an xyz pos and xyz norm value 
+//posVS = position from Vertex Shader, posTC = position from this Tesselation Control shader
+
+in vec3 posVS[] ;
+in vec3 normVS[] ;
+
+out vec3 posTC[] ;
+out vec3 normTC[] ;
+out vec3 fragPosCS[];
+
+uniform vec3 eyePos;
+
+float GetTessLevel(float, float);
+
+void main()
+{
+  // tesselation level; we wil find this automatically later but for now hardcoded value
+   int tessLevel = 1;
+
+   // gpu can calculate each control point in parallel
+   // tesselation level same for entire patch so only need to set it once (for the first control point)
+   // gl_invocation called for each control point
+   if (gl_InvocationID==0)
+   {
+		  fragPosCS[gl_InvocationID] = posVS[gl_InvocationID];
+		 // fragPosCS[0] = posVS[0];
+		  //fragPosCS[1] = posVS[1];
+		 // fragPosCS[2] = posVS[2];
+		  float eyeToVertexDist0 = distance(eyePos, posVS[0]);
+		  float eyeToVertexDist1 = distance(eyePos, posVS[1]);
+		  float eyeToVertexDist2 = distance(eyePos, posVS[2]);
+		   // Calculate the tessellation levels
+          gl_TessLevelOuter[0] = GetTessLevel(eyeToVertexDist1, eyeToVertexDist2); 
+          gl_TessLevelOuter[1] = GetTessLevel(eyeToVertexDist2, eyeToVertexDist0); 
+          gl_TessLevelOuter[2] = GetTessLevel(eyeToVertexDist0, eyeToVertexDist1);
+          gl_TessLevelInner[0] = gl_TessLevelOuter[2]; 
+
+   }
+
+   // pass through position and normal information
+   posTC[gl_InvocationID]  = posVS[gl_InvocationID] ;
+   normTC[gl_InvocationID] = normVS[gl_InvocationID] ;
+
+}
+
+float GetTessLevel(float Distance0, float Distance1)
+{
+	float lambda = -0.05f;
+	float alpha = 20f;
+	float AverageDist = (Distance0 + Distance1) / 2.0;
+	float expValue = ceil(round(exp(lambda*AverageDist) * alpha));
+	if(expValue < 1.0f)
+	{
+		expValue = 1.0f;
+		return expValue;
+	}
+	else
+	{
+		expValue = ceil(round(exp(lambda*AverageDist) * alpha));
+		return expValue;
+	}
+}

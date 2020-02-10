@@ -1,0 +1,10 @@
+﻿  Source.cpp
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(91): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(164): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(165): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(169): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(170): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(172): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(173): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+h:\documents\year3\assignment\terrain\terrain\src\source.cpp(186): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Terrain.vcxproj -> H:\Documents\Year3\Assignment\Terrain\Debug\Terrain.exe
