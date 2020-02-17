@@ -73,10 +73,27 @@ int main()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+	glm::vec2 uv1(0.0f, 1.0f);
+	glm::vec2 uv2(0.0f, 0.0f);
+	glm::vec2 uv3(1.0f, 0.0f);
+	glm::vec2 uv4(1.0f, 1.0f);
+
+	float texCoords[] = {
+		uv1.x, uv1.y,
+		uv2.x, uv2.y,
+		uv3.x, uv3.y,
+		uv1.x, uv1.y,
+		uv3.x, uv3.y,
+		uv4.x, uv4.y
+	};
+
 	// simple vertex and fragment shader - add your own tess and geo shader
 	Shader shader("..\\shaders\\tessVert.vs", "..\\shaders\\phongDirFrag.fs", "..\\shaders\\Norms.gs", "..\\shaders\\tessControlShader.tcs", "..\\shaders\\tessEvaluationShader.tes");
 
-	unsigned int dirtTexture = loadTexture("..\\resources\\dirt.jpg");
+	unsigned int dirtTexture = loadTexture("..\\resources\\boio.png");
+
+	shader.use();
+	shader.setInt("texture1", 0);
 
 	//Terrain Constructor ; number of grids in width, number of grids in height, gridSize
 	Terrain terrain(50, 50,10);
@@ -108,23 +125,31 @@ int main()
 		shader.setVec3("viewPos", camera.Position); // Position of the camera.
 		shader.setVec3("eyePos", camera.Position); // Position of the camera.
 
+		glm::vec3 matColour;
+		matColour.x = sin(glfwGetTime() * 2.0f);
+		matColour.y = sin(glfwGetTime() * 0.7f);
+		matColour.z = sin(glfwGetTime() * 1.3f);
+
+		glm::vec3 diffuseColour = matColour * glm::vec3(0.9f);
+		glm::vec3 ambientColour = matColour * glm::vec3(0.5f);
+
 		//light properties
 		shader.setVec3("dirLight.direction", dirLightPos); // Direction of the light.
-		shader.setVec3("dirLight.ambient", 1.0f, 0.2f, 0.5f); // Ambient lighting.
-		shader.setVec3("dirLight.diffuse", 1.0f, 0.2f, 0.5f); // Diffuse lighting.
-		shader.setVec3("dirLight.specular", 1.0f, 0.2f, 0.5f); // Specular lighting.
+		shader.setVec3("dirLight.ambient", 1.0f, 1.0f, 1.0f); // Ambient lighting.
+		shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f); // Diffuse lighting.
+		shader.setVec3("dirLight.specular", 1.0f, 1.0f, 1.0f); // Specular lighting.
 		//material properties
-		shader.setVec3("mat.ambient", 0.7f, 0.7f, 0.7f); // Ambient colour of the material.
-		shader.setVec3("mat.diffuse", 0.7f, 0.7f, 0.7f); // Diffuse colour of the material.
+		shader.setVec3("mat.ambient", ambientColour); // Ambient colour of the material.
+		shader.setVec3("mat.diffuse", diffuseColour); // Diffuse colour of the material.
 		shader.setVec3("mat.specular", 0.7f, 0.7f, 0.7f); // Specular colour of the material.
 		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
-
+		glVertexAttrib4fv(2, texCoords);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, dirtTexture);
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) // If the L button is pressed, change polygon mode to GL_FILL from GL_LINE.
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_PATCHES, 0, vertices.size() / 3);
 		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
 		  camera.printCameraCoords();

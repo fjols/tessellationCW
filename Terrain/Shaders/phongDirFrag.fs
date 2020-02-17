@@ -4,6 +4,7 @@ out vec4 FragColor;
 
 in vec3 gNormals ;
 in vec3 gWorldPos_FS_in ;
+in vec2 texCoords;
 
 
 struct Material {
@@ -21,7 +22,7 @@ struct DirLight {
     vec3 specular;
 }; 
 
-//uniform sampler2D texture1;
+uniform sampler2D texture1;
 uniform DirLight dirLight;
 uniform Material mat ;
 uniform vec3 viewPos ;
@@ -33,7 +34,7 @@ void main()
   
      vec3 viewDir = normalize(viewPos - gWorldPos_FS_in);
 	 vec3 norm = normalize(gNormals) ;
-	 vec3 ambient = dirLight.ambient * mat.ambient;     
+	 vec3 ambient = dirLight.ambient * mat.ambient * vec3(texture(texture1, texCoords));     
      vec3 lightDir = normalize(-dirLight.direction);
     // diffuse shading
     float diff = max(dot(norm, dirLight.direction), 0.0);
@@ -46,7 +47,7 @@ void main()
     vec3 specular = dirLight.specular * (spec * mat.specular);
     FragColor = vec4((ambient + diffuse + specular),1.0f);
 // FragColor = vec4((ambient+diffuse),1.0f) ;
- //FragColor =  texture(texture1, TexCoords);
+	//FragColor =  texture(texture1, texCoords);
 //FragColor = vec4(gNormals,1.0f) ;
 
 	
