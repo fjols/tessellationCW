@@ -76,6 +76,7 @@ int main()
 	// simple vertex and fragment shader - add your own tess and geo shader
 	Shader shader("..\\shaders\\tessVert.vs", "..\\shaders\\phongDirFrag.fs", "..\\shaders\\Norms.gs", "..\\shaders\\tessControlShader.tcs", "..\\shaders\\tessEvaluationShader.tes");
 
+	unsigned int dirtTexture = loadTexture("..\\resources\\dirt.jpg");
 
 	//Terrain Constructor ; number of grids in width, number of grids in height, gridSize
 	Terrain terrain(50, 50,10);
@@ -109,14 +110,18 @@ int main()
 
 		//light properties
 		shader.setVec3("dirLight.direction", dirLightPos); // Direction of the light.
-		shader.setVec3("dirLight.ambient", 1.0f, 1.0f, 0.0f); // Ambient lighting.
-		shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 0.0f); // Diffuse lighting.
-		shader.setVec3("dirLight.specular", 1.0f, 1.0f, 0.0f); // Specular lighting.
+		shader.setVec3("dirLight.ambient", 1.0f, 0.2f, 0.5f); // Ambient lighting.
+		shader.setVec3("dirLight.diffuse", 1.0f, 0.2f, 0.5f); // Diffuse lighting.
+		shader.setVec3("dirLight.specular", 1.0f, 0.2f, 0.5f); // Specular lighting.
 		//material properties
-		shader.setVec3("mat.ambient", 0.0f, 1.0f, 0.0f); // Ambient colour of the material.
-		shader.setVec3("mat.diffuse", 0.0f, 1.0f, 0.0f); // Diffuse colour of the material.
-		shader.setVec3("mat.specular", 0.0f, 1.0f, 0.0f); // Specular colour of the material.
-		shader.setFloat("mat.shininess", 0.45f); // Shininess of the material.
+		shader.setVec3("mat.ambient", 0.7f, 0.7f, 0.7f); // Ambient colour of the material.
+		shader.setVec3("mat.diffuse", 0.7f, 0.7f, 0.7f); // Diffuse colour of the material.
+		shader.setVec3("mat.specular", 0.7f, 0.7f, 0.7f); // Specular colour of the material.
+		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, dirtTexture);
+
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) // If the L button is pressed, change polygon mode to GL_FILL from GL_LINE.
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

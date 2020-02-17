@@ -1,50 +1,71 @@
 #version 450 core
+layout(triangles, equal_spacing, ccw) in;
 
-// reading in a triangle, split tesselated triangels evenly in a counter-clockwise direction (ccw)
-layout(triangles, fractional_even_spacing, ccw) in;
-
-// forward declare functions to perfrom interpolation with the barycentric coordinates from the Primitive Generator
 vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2) ;
 vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2) ;
-
-
-// unifrom matrices to perform transformations
-// previously this would have been done in vertex shader
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-// read in vector arrays from previous shader
-in vec3 posTC[] ;
-in vec3 normTC[] ;
+struct OutputPatch
+{
+    vec3 WorldPos_B030;
+    vec3 WorldPos_B021;
+    vec3 WorldPos_B012;
+    vec3 WorldPos_B003;
+    vec3 WorldPos_B102;
+    vec3 WorldPos_B201;
+    vec3 WorldPos_B300;
+    vec3 WorldPos_B210;
+    vec3 WorldPos_B120;
+    vec3 WorldPos_B111;
+	vec3 tc_norms[3];
+};
 
-// pass along the interpolated values
-out vec3 normES ;
-out vec3 fragPos ;
+in patch OutputPatch oPatch;
+
+out vec3 WorldPos_FS_in ;
+out vec3 Normals ;
 
 
 
 void main()
 {
-    // interpolate the normal and xyz position using the linear interpolation function
-    // use 3D because they are in three dimensions; 2D also included for uv texture coordinates
+    
+    Normals = interpolate3D(oPatch.tc_norms[0], oPatch.tc_norms[1], oPatch.tc_norms[2]);
 
-   normES = interpolate3D(normTC[0], normTC[1], normTC[2]) ;
-   vec3 posES = interpolate3D(posTC[0], posTC[1], posTC[2]) ;
 
-   // transform vertex to clip space  - NOTE: WE NEED TO DO IT HERE NOW and not in vertex shader
-   gl_Position = projection * view * vec4(posES, 1.0);
+    float u = gl_TessCoord.x;
+    float v = gl_TessCoord.y;
+    float w = gl_TessCoord.z;
+
+    float uPow3 = pow(u, 3);
+    float vPow3 = pow(v, 3);
+    float wPow3 = pow(w, 3);
+    float uPow2 = pow(u, 2);
+    float vPow2 = pow(v, 2);
+    float wPow2 = pow(w, 2);
+
+    WorldPos_FS_in = oPatch.WorldPos_B300 * wPow3 +
+                    oPatch.WorldPos_B030 * uPow3 +
+                    oPatch.WorldPos_B003 * vPow3 +
+                    oPatch.WorldPos_B210 * 3.0 * wPow2 * u +
+                    oPatch.WorldPos_B120 * 3.0 * w * uPow2 +
+                    oPatch.WorldPos_B201 * 3.0 * wPow2 * v +
+                    oPatch.WorldPos_B021 * 3.0 * uPow2 * v +
+                    oPatch.WorldPos_B102 * 3.0 * w * vPow2 +
+                    oPatch.WorldPos_B012 * 3.0 * u * vPow2 +
+                    oPatch.WorldPos_B111 * 6.0 * w * u * v;
+
+    gl_Position = projection * view *vec4(WorldPos_FS_in, 1.0);
 } 
 
-
-//basic linear interpolation
 vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
 {
-   	return vec2(gl_TessCoord.x) * v0 + vec2(gl_TessCoord.y) * v1 + vec2(gl_TessCoord.z) * v2;
+    return vec2(gl_TessCoord.x) * v0 + vec2(gl_TessCoord.y) * v1 + vec2(gl_TessCoord.z) * v2;
 }
 
 vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)
 {
-   	return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
+    return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
 }
-

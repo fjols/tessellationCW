@@ -29,7 +29,7 @@ uniform vec3 viewPos ;
 
 void main()
 {   
-    
+    vec3 col = vec3(0.6,0.1,0.2) ;
   
      vec3 viewDir = normalize(viewPos - gWorldPos_FS_in);
 	 vec3 norm = normalize(gNormals) ;
@@ -45,6 +45,9 @@ void main()
     vec3 diffuse  = dirLight.diffuse  * (diff * mat.diffuse);
     vec3 specular = dirLight.specular * (spec * mat.specular);
     FragColor = vec4((ambient + diffuse + specular),1.0f);
+// FragColor = vec4((ambient+diffuse),1.0f) ;
+ //FragColor =  texture(texture1, TexCoords);
+//FragColor = vec4(gNormals,1.0f) ;
 
 	
 }
