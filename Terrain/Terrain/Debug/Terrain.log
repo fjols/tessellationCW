@@ -1,16 +1,16 @@
 ﻿  Source.cpp
 c:\users\charlie.charlie-san\desktop\code\tessellationcw\terrain\terrain\src\source.cpp(109): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\charlie.charlie-san\desktop\code\tessellationcw\terrain\terrain\src\source.cpp(129): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tessellationcw\terrain\terrain\src\source.cpp(132): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-c:\users\charlie.charlie-san\desktop\code\tessellationcw\terrain\terrain\src\source.cpp(130): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tessellationcw\terrain\terrain\src\source.cpp(133): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-c:\users\charlie.charlie-san\desktop\code\tessellationcw\terrain\terrain\src\source.cpp(131): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tessellationcw\terrain\terrain\src\source.cpp(134): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float

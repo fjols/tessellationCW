@@ -28,6 +28,7 @@ struct OutputPatch
 
 // attributes of the output CPs
 out patch OutputPatch oPatch;
+//out vec2 texCoords[];
 
 void main()
 {

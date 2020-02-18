@@ -90,7 +90,7 @@ int main()
 	// simple vertex and fragment shader - add your own tess and geo shader
 	Shader shader("..\\shaders\\tessVert.vs", "..\\shaders\\phongDirFrag.fs", "..\\shaders\\Norms.gs", "..\\shaders\\tessControlShader.tcs", "..\\shaders\\tessEvaluationShader.tes");
 
-	unsigned int dirtTexture = loadTexture("..\\resources\\boio.png");
+	unsigned int heightMap = loadTexture("..\\resources\\heightMap.png");
 
 	shader.use();
 	shader.setInt("texture1", 0);
@@ -113,6 +113,9 @@ int main()
 		processInput(window);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, heightMap);
 
 		glBindVertexArray(VAO);
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1200.0f);
@@ -143,9 +146,6 @@ int main()
 		shader.setVec3("mat.diffuse", diffuseColour); // Diffuse colour of the material.
 		shader.setVec3("mat.specular", 0.7f, 0.7f, 0.7f); // Specular colour of the material.
 		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
-		glVertexAttrib4fv(2, texCoords);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, dirtTexture);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) // If the L button is pressed, change polygon mode to GL_FILL from GL_LINE.
