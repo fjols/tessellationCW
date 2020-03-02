@@ -10,6 +10,10 @@ vec3 getNormal(vec3 a, vec3 b, vec3 c) ;
 in vec3 WorldPos_CS_in[];
 in vec3 eye[] ;
 in vec3 normals[] ;
+in vec2 texCoords[];
+
+out vec2 tcTexCoords[];
+out vec3 WorldPosTC_CS_in[];
 
 struct OutputPatch
 {
@@ -35,7 +39,8 @@ void main()
 
   // vec3 n = getNormal(WorldPos_CS_in[0].xyz,WorldPos_CS_in[1].xyz,WorldPos_CS_in[2].xyz) ;
 
-
+   tcTexCoords[gl_InvocationID] = texCoords[gl_InvocationID];
+   WorldPosTC_CS_in[gl_InvocationID] = WorldPos_CS_in[gl_InvocationID];
    for (int i = 0 ; i < 3 ; i++) {
        oPatch.tc_norms[i] = normals[i];
     }

@@ -88,7 +88,7 @@ int main()
 	};
 
 	// simple vertex and fragment shader - add your own tess and geo shader
-	Shader shader("..\\shaders\\tessVert.vs", "..\\shaders\\phongDirFrag.fs", "..\\shaders\\Norms.gs", "..\\shaders\\tessControlShader.tcs", "..\\shaders\\tessEvaluationShader.tes");
+	Shader shader("..\\shaders\\heightV.vs", "..\\shaders\\heightF.fs", "..\\shaders\\heightG.gs", "..\\shaders\\heightTC.tcs", "..\\shaders\\heightTE.tes");
 
 	unsigned int heightMap = loadTexture("..\\resources\\heightMap.png");
 
@@ -114,8 +114,9 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glActiveTexture(GL_TEXTURE1);
+
 		glBindTexture(GL_TEXTURE_2D, heightMap);
+		glActiveTexture(GL_TEXTURE1);
 
 		glBindVertexArray(VAO);
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1200.0f);
@@ -142,14 +143,14 @@ int main()
 		shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f); // Diffuse lighting.
 		shader.setVec3("dirLight.specular", 1.0f, 1.0f, 1.0f); // Specular lighting.
 		//material properties
-		shader.setVec3("mat.ambient", ambientColour); // Ambient colour of the material.
-		shader.setVec3("mat.diffuse", diffuseColour); // Diffuse colour of the material.
+		shader.setVec3("mat.ambient", 0.7f, 0.7f, 0.7f); // Ambient colour of the material.
+		shader.setVec3("mat.diffuse", 0.7f, 0.7f, 0.7f); // Diffuse colour of the material.
 		shader.setVec3("mat.specular", 0.7f, 0.7f, 0.7f); // Specular colour of the material.
 		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) // If the L button is pressed, change polygon mode to GL_FILL from GL_LINE.
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_PATCHES, 0, vertices.size() / 3);
 		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
 		  camera.printCameraCoords();

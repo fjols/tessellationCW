@@ -4,7 +4,7 @@ out vec4 FragColor;
 
 in vec3 gNormals ;
 in vec3 gWorldPos_FS_in ;
-in vec2 texCoords;
+in vec2 gTexCoords;
 
 
 struct Material {
@@ -34,7 +34,7 @@ void main()
   
      vec3 viewDir = normalize(viewPos - gWorldPos_FS_in);
 	 vec3 norm = normalize(gNormals) ;
-	 vec3 ambient = dirLight.ambient * mat.ambient * vec3(texture(texture1, texCoords));     
+	 vec3 ambient = dirLight.ambient * mat.ambient * vec3(texture(texture1, gTexCoords));     
      vec3 lightDir = normalize(-dirLight.direction);
     // diffuse shading
     float diff = max(dot(norm, dirLight.direction), 0.0);

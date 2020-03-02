@@ -24,10 +24,13 @@ struct OutputPatch
 };
 
 in patch OutputPatch oPatch;
-//in vec2 texCoords[];
+in vec2 tcTexCoords[];
+in vec3 WorldPosTC_CS_in[];
 
 out vec3 WorldPos_FS_in ;
 out vec3 Normals ;
+
+out vec2 teTexCoords;
 
 
 
@@ -58,9 +61,13 @@ void main()
                     oPatch.WorldPos_B102 * 3.0 * w * vPow2 +
                     oPatch.WorldPos_B012 * 3.0 * u * vPow2 +
                     oPatch.WorldPos_B111 * 6.0 * w * u * v;
+	
+	teTexCoords = interpolate2D(tcTexCoords[0], tcTexCoords[1], tcTexCoords[2]);
+	WorldPos_FS_in = interpolate3D(WorldPosTC_CS_in[0], WorldPosTC_CS_in[1], WorldPosTC_CS_in[2]);
 
-	//float height = (texture(heightMap, texCoords).x);
-	//WorldPos_FS_in.y = height * 20;
+
+	float height = (texture(heightMap, teTexCoords).x);
+	WorldPos_FS_in.y = height;
 
     gl_Position = projection * view * model * vec4(WorldPos_FS_in, 1.0);
 } 

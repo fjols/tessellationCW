@@ -5,10 +5,12 @@ vec3 getNormal() ;
 
 in vec3 WorldPos_FS_in[] ;
 in vec3 Normals[] ;
+in vec2 teTexCoords[];
 
 out vec3 gNormals ;
 out vec3 gWorldPos_FS_in ;
 out vec3 gFragPos ;
+out vec2 gTexCoords;
 
 uniform float normLength ;
 
@@ -21,6 +23,7 @@ void main()
       gFragPos = vec3(0.0) ;
 	  gl_Position = gl_in[i].gl_Position ;
       gWorldPos_FS_in = WorldPos_FS_in[i] ;
+	  gTexCoords = teTexCoords[i];
 	  gNormals = getNormal() ;    
       EmitVertex() ;
 	

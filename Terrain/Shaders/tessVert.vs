@@ -11,12 +11,12 @@ uniform vec3 eyePos ;
 out vec3 eye ;
 out vec3 WorldPos_CS_in; 
 out vec3 normals ;
-//out vec2 texCoords;
+out vec2 texCoords;
 
 void main()
 {
     normals = normalize((model * vec4(aNormals, 0.0)).xyz) ;
-	//texCoords = aTexCoords;
+	texCoords = aTexCoords;
 	eye = eyePos ;
 	WorldPos_CS_in = (model * vec4(aPos, 1.0)).xyz; 
 }
