@@ -90,7 +90,7 @@ int main()
 	// simple vertex and fragment shader - add your own tess and geo shader
 	Shader shader("..\\shaders\\heightV.vs", "..\\shaders\\heightF.fs", "..\\shaders\\heightG.gs", "..\\shaders\\heightTC.tcs", "..\\shaders\\heightTE.tes");
 
-	unsigned int heightMap = loadTexture("..\\resources\\heightMap.png");
+	unsigned int heightMap = loadTexture("..\\resources\\heightmap3.png");
 
 	shader.use();
 	shader.setInt("texture1", 0);
@@ -148,9 +148,9 @@ int main()
 		shader.setVec3("mat.specular", 0.7f, 0.7f, 0.7f); // Specular colour of the material.
 		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) // If the L button is pressed, change polygon mode to GL_FILL from GL_LINE.
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawArrays(GL_PATCHES, 0, vertices.size() / 3);
 		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
 		  camera.printCameraCoords();
@@ -273,6 +273,9 @@ void setVAO(vector <float> vertices) {
 	//texture
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	//normals
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 	
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

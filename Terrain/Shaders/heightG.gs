@@ -4,7 +4,7 @@ layout(triangle_strip, max_vertices = 3) out ;
 vec3 getNormal() ;
 
 in vec3 posES[] ;
-in vec3 normals[] ;
+in vec3 normES[] ;
 
 out vec3 gNormals ;
 out vec3 gWorldPos_FS_in ;
@@ -17,7 +17,7 @@ void main()
    {
       gl_Position = gl_in[i].gl_Position ;
       gWorldPos_FS_in = posES[i] ;
-     // gNormals = getNormal() ;    
+      gNormals = getNormal() ;    
       EmitVertex() ;
   }
      EndPrimitive() ;
