@@ -90,13 +90,13 @@ int main()
 	// simple vertex and fragment shader - add your own tess and geo shader
 	Shader shader("..\\shaders\\heightV.vs", "..\\shaders\\heightF.fs", "..\\shaders\\heightG.gs", "..\\shaders\\heightTC.tcs", "..\\shaders\\heightTE.tes");
 
-	unsigned int heightMap = loadTexture("..\\resources\\heightmap3.png");
+	unsigned int heightMap = loadTexture("..\\resources\\heightMap.png");
 
 	shader.use();
 	shader.setInt("texture1", 0);
 
 	//Terrain Constructor ; number of grids in width, number of grids in height, gridSize
-	Terrain terrain(50, 50,10);
+	Terrain terrain(100, 100,10);
 	std::vector<float> vertices= terrain.getVertices();
 	setVAO(vertices);
 

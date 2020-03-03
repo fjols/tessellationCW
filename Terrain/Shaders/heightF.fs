@@ -29,9 +29,9 @@ uniform vec3 viewPos ;
 
 void main()
 {   
-    float height = gNormals.y / 20.f;
-	vec4 green = vec4(0.0, 1.0, 0.0, 0.0);
-	vec4 grey = vec4(0.25, 0.5, 0.25, 0.0);
+    float height = gWorldPos_FS_in.y / 100.f;
+	vec4 green = vec4(0.3, 0.35, 0.15, 0.0);
+	vec4 grey = vec4(0.5, 0.4, 0.5, 0.0);
 	vec3 colour;
 
 	if(height > 0.1)
@@ -52,12 +52,13 @@ void main()
 	}
 	else
 	{
-		colour = vec3(mix(green, grey, smoothstep(1.0, 1.0, height)).rgb);
+		//colour = vec3(mix(green, grey, smoothstep(1.0f, 1.0, height)).rgb);
+		colour = vec3(1.0, 1.0, 0.0);
 	}
 
      vec3 viewDir = normalize(viewPos - gWorldPos_FS_in);
 	 vec3 norm = normalize(gNormals);
-	 vec3 ambient = dirLight.ambient * (0.05 * colour);     
+	 vec3 ambient = dirLight.ambient * (0.2 * colour);     
      vec3 lightDir = normalize(-dirLight.direction);
     // diffuse shading
     float diff = max(dot(norm, dirLight.direction), 0.0);
@@ -67,7 +68,7 @@ void main()
     // combine results
    
     vec3 diffuse  = dirLight.diffuse  * (diff * colour);
-    vec3 specular = dirLight.specular * (spec * mat.specular);
+    vec3 specular = dirLight.specular * (spec * colour);
 	
 
     FragColor = vec4((ambient + diffuse + specular), 1.0f);

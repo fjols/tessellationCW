@@ -20,19 +20,11 @@ out vec3 posTC[] ;
 out vec3 normTC[] ;
 out vec2 texCoordsTC[];
 
-float lambda = -0.01;
-float alpha = 20;
-float GetTessLevel(float dist1, float dist2){
-	float avgDist = (dist1 + dist2)/2;
-	return clamp(ceil(round(exp(lambda*avgDist)*alpha)), 1, 8);
-
-	
-}
+float GetTessLevel(float, float);
 
 void main()
 {
   // tesselation level; we wil find this automatically later but for now hardcoded value
-   //int tessLevel = 2;
 
    // gpu can calculate each control point in parallel
    // tesselation level same for entire patch so only need to set it once (for the first control point)
@@ -58,3 +50,10 @@ void main()
    texCoordsTC[gl_InvocationID] = texCoords[gl_InvocationID];
 }
 
+float GetTessLevel(float dist1, float dist2)
+{
+	float lambda = -0.005;
+	float alpha = 80;
+	float avgDist = (dist1 + dist2)/2;
+	return clamp(ceil(round(exp(lambda*avgDist)*alpha)), 1, 8);
+}

@@ -38,7 +38,7 @@ void main()
    // transform vertex to clip space  - NOTE: WE NEED TO DO IT HERE NOW and not in vertex shader
 
   float height = (texture(heightMap, texCoordsTE).x);
-  posES.y = height * 200;
+  posES.y = height * 100;
   gl_Position = projection * view * model * vec4(posES, 1.0);
 } 
 
