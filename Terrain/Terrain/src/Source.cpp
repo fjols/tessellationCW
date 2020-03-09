@@ -45,6 +45,8 @@ unsigned int VBO, VAO;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+float height = 10.0f;
+
 int main()
 {
 	glfwInit();
@@ -128,6 +130,7 @@ int main()
 		shader.setMat4("model", model); // Model matrix.
 		shader.setVec3("viewPos", camera.Position); // Position of the camera.
 		shader.setVec3("eyePos", camera.Position); // Position of the camera.
+		shader.setFloat("heightFactor", height);
 
 		glm::vec3 matColour;
 		matColour.x = sin(glfwGetTime() * 2.0f);
@@ -143,9 +146,9 @@ int main()
 		shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f); // Diffuse lighting.
 		shader.setVec3("dirLight.specular", 1.0f, 1.0f, 1.0f); // Specular lighting.
 		//material properties
-		shader.setVec3("mat.ambient", 0.7f, 0.7f, 0.7f); // Ambient colour of the material.
-		shader.setVec3("mat.diffuse", 0.7f, 0.7f, 0.7f); // Diffuse colour of the material.
-		shader.setVec3("mat.specular", 0.7f, 0.7f, 0.7f); // Specular colour of the material.
+		shader.setVec3("mat.ambient", 1.0f, 1.0, 1.0f); // Ambient colour of the material.
+		shader.setVec3("mat.diffuse", 1.0f, 1.0f, 1.0f); // Diffuse colour of the material.
+		shader.setVec3("mat.specular", 1.0f, 1.0f, 1.0f); // Specular colour of the material.
 		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -179,6 +182,10 @@ void processInput(GLFWwindow *window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		height += 1.f;
+	if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS)
+		height -= 1.f;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

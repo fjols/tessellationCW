@@ -25,40 +25,44 @@ uniform sampler2D texture1;
 uniform DirLight dirLight;
 uniform Material mat ;
 uniform vec3 viewPos ;
+uniform float heightFactor;
 
 
 void main()
 {   
-    float height = gWorldPos_FS_in.y / 100.f;
-	vec4 green = vec4(0.3, 0.35, 0.15, 0.0);
+    float height = gWorldPos_FS_in.y / heightFactor;
+	vec3 green = vec3(0.3, 0.35, 0.15);
 	vec4 grey = vec4(0.5, 0.4, 0.5, 0.0);
+    
+    vec3 brown = vec3(0.61, 0.36, 0.0);
+    vec4 white = vec4(0.7, 0.7, 0.7, 0.0);
+
 	vec3 colour;
 
-	if(height > 0.1)
+	if(height < 0.2)
 	{
-		colour = vec3(mix(green, grey, smoothstep(0.1, 1.0, height)).rgb);
+		//colour = vec3(mix(green, grey, smoothstep(0.3, 0.6, height)).rgb);
+        colour = green;
 	}
-	else if(height > 0.4)
+   else if(height < 0.5)
 	{
-		colour = vec3(mix(green, grey, smoothstep(0.4, 1.0, height)).rgb);
+       //colour = vec3(mix(brown, grey, smoothstep(0.6, 0.8, height)).rgb);
+       colour = brown;
 	}
-	else if(height > 0.6)
-	{
-		colour = vec3(mix(green, grey, smoothstep(0.6, 1.0, height)).rgb);
-	}
-	else if(height > 0.8)
-	{
-		colour = vec3(mix(green, grey, smoothstep(0.8, 1.0, height)).rgb);
-	}
+	//else if(height > 0.8)
+	///{
+	//	//colour = vec3(mix(white, grey, smoothstep(0.8, 1.0, height)).rgb);
+   //colour = white;
+   //}
 	else
 	{
-		//colour = vec3(mix(green, grey, smoothstep(1.0f, 1.0, height)).rgb);
-		colour = vec3(1.0, 1.0, 0.0);
+		//colour = vec3(mix(green, grey, smoothstep(0.25f, 1.0, height)).rgb);
+		colour = vec3(1.0f, 1.0f, 1.0f);
 	}
 
      vec3 viewDir = normalize(viewPos - gWorldPos_FS_in);
 	 vec3 norm = normalize(gNormals);
-	 vec3 ambient = dirLight.ambient * (0.2 * colour);     
+	 vec3 ambient = dirLight.ambient * colour;     
      vec3 lightDir = normalize(-dirLight.direction);
     // diffuse shading
     float diff = max(dot(norm, dirLight.direction), 0.0);
@@ -71,7 +75,7 @@ void main()
     vec3 specular = dirLight.specular * (spec * colour);
 	
 
-    FragColor = vec4((ambient + diffuse + specular), 1.0f);
+    FragColor = vec4((ambient + diffuse + specular) * colour, 1.0f);
 
 	
 }
