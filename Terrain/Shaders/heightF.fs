@@ -30,24 +30,25 @@ uniform float heightFactor;
 
 void main()
 {   
-    float height = gWorldPos_FS_in.y / heightFactor;
-	vec3 green = vec3(0.3, 0.35, 0.15);
+    float height = gWorldPos_FS_in.y / 100;
+	vec4 green = vec4(0.3, 0.35, 0.15, 0.0);
+	vec3 red = vec3(0.7, 0.0, 0.0);
 	vec4 grey = vec4(0.5, 0.4, 0.5, 0.0);
     
-    vec3 brown = vec3(0.61, 0.36, 0.0);
-    vec4 white = vec4(0.7, 0.7, 0.7, 0.0);
+    vec4 brown = vec4(0.61, 0.36, 0.0, 0.0);
+    vec3 white = vec3(0.7, 0.7, 0.7);
 
 	vec3 colour;
 
-	if(height < 0.2)
+	if(height > -0.1)
 	{
-		//colour = vec3(mix(green, grey, smoothstep(0.3, 0.6, height)).rgb);
-        colour = green;
+		colour = vec3(mix(green, grey, smoothstep(0.3, 0.6, height)).rgb);
+        //colour = red;
 	}
-   else if(height < 0.5)
+   else if(height > -0.15)
 	{
-       //colour = vec3(mix(brown, grey, smoothstep(0.6, 0.8, height)).rgb);
-       colour = brown;
+       colour = vec3(mix(brown, grey, smoothstep(0.6, 0.8, height)).rgb);
+       //colour = brown;
 	}
 	//else if(height > 0.8)
 	///{
@@ -57,7 +58,7 @@ void main()
 	else
 	{
 		//colour = vec3(mix(green, grey, smoothstep(0.25f, 1.0, height)).rgb);
-		colour = vec3(1.0f, 1.0f, 1.0f);
+		colour = vec3(0.8f, 0.8f, 0.8f);
 	}
 
      vec3 viewDir = normalize(viewPos - gWorldPos_FS_in);

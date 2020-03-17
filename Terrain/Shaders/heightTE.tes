@@ -38,9 +38,6 @@ void main()
 
    // transform vertex to clip space  - NOTE: WE NEED TO DO IT HERE NOW and not in vertex shader
 
-  float height = (texture(heightMap, texCoordsTE).x);
-  posES.y = height * heightFactor;
-  gl_Position = projection * view * vec4(posES, 1.0);
 
   float right = (textureOffset(heightMap, texCoordsTE, ivec2(1, 0)).r)*heightFactor;
   float left = (textureOffset(heightMap, texCoordsTE, ivec2(-1, 0)).r)*heightFactor;
@@ -51,6 +48,9 @@ void main()
   normals = normalize(normals);
   normES = normals;
 
+  float height = (texture(heightMap, texCoordsTE).x);
+  posES.y = height * 100;
+  gl_Position = projection * view * vec4(posES, 1.0);
 } 
 
 
