@@ -15,6 +15,7 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform sampler2D heightMap;
 uniform float heightFactor;
+uniform vec3 eyePos;
 
 // read in vector arrays from previous shader
 in vec3 posTC[] ;
@@ -28,6 +29,7 @@ out float heightFactorTE;
 out vec2 texCoordsTE;
 
 out float heightTE;
+out float visibility;
 
 
 void main()
@@ -41,7 +43,7 @@ void main()
 
    // transform vertex to clip space  - NOTE: WE NEED TO DO IT HERE NOW and not in vertex shader
 
-
+  // NICE NORMALS
   float right = (textureOffset(heightMap, texCoordsTE, ivec2(1, 0)).r)*heightFactor;
   float left = (textureOffset(heightMap, texCoordsTE, ivec2(-1, 0)).r)*heightFactor;
   float up = (textureOffset(heightMap, texCoordsTE, ivec2(0, 1)).r)*heightFactor;
@@ -51,11 +53,19 @@ void main()
   normals = normalize(normals);
   normES = normals;
 
-  heightFactorTE = heightFactor;
+  heightFactorTE = heightFactor; // Set the height factor value to the data that will be passed along the pipeline.
 
-  float height = (texture(heightMap, texCoordsTE).x);
-  posES.y = height * heightFactor;
-  heightTE = posES.y;
+  float height = (texture(heightMap, texCoordsTE).x); // Generate height value using height map.
+  posES.y = height * heightFactor; // Offset the position on the y axis of posES.
+  heightTE = posES.y; // Store this value and pass it along pipeline.
+
+  float gradient = 0.8f;
+  float density = 0.010f;
+
+  float distanceFromCamera = distance(eyePos, posES);
+  visibility = exp(-pow((distanceFromCamera * density), gradient));
+  visibility = clamp(visibility, 0.0f ,1.0f);
+
   gl_Position = projection * view * model * vec4(posES, 1.0);
 } 
 

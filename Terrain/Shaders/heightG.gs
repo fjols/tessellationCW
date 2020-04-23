@@ -8,12 +8,14 @@ in vec3 normES[] ;
 in float heightFactorTE[];
 in vec2 texCoordsTE[];
 in float heightTE[];
+in float visibility[];
 
 out vec3 gNormals ;
 out vec3 gFragPos ;
 out vec2 gTexCoords;
 out float heightFactorG;
 out float heightG;
+out float gVisibility;
 
 
 void main()
@@ -27,6 +29,7 @@ void main()
       gNormals = normES[i];    
 	  heightFactorG = heightFactorTE[i];
 	  heightG = heightTE[i];
+	  gVisibility = visibility[i];
       EmitVertex() ;
   }
      EndPrimitive() ;

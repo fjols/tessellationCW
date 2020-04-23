@@ -5,6 +5,7 @@ out vec4 FragColor;
 in vec3 gNormals ;
 in vec3 gFragPos ;
 in float heightFactorG;
+in float gVisibility;
 
 
 in float heightG;
@@ -47,7 +48,7 @@ void main()
     vec3 diffuse  = dirLight.diffuse  * (diff * mat.diffuse);
     vec3 specular = dirLight.specular * (spec * mat.specular);
 
-	float height = heightG / heightFactorG;
+	float height = heightG / heightFactorG; // Value used to check what the height is.
 
 	vec3 lightGray = vec3(0.82f, 0.82f, 0.82f);
 	vec3 gray = vec3(0.5f, 0.4f, 0.5f);
@@ -59,12 +60,12 @@ void main()
 
 	vec3 colour;
 
-	if(height < 0.5f)
+	if(height < 0.5f) // If height is less than 0.5 then do this colour.
 	{
 		colour = vec3(mix(blue, darkGreen, smoothstep(0.01f, 0.5f, height)).rgb);
 		//colour = gray;
 	}
-	else if(height < 0.8)
+	else if(height < 0.8) // If height is less than 0.8 then do this colour.
 	{
 		colour = vec3(mix(darkGreen, gray, smoothstep(0.55f, 0.8f, height)).rgb);
 		//colour = green;
@@ -74,15 +75,7 @@ void main()
 		colour = gray;
 	}
 	
-
-	//else
-	//{
-	//	colour = gray;
-	//}
-	
-
-    FragColor = vec4((ambient + diffuse + specular) * colour, 1.0f);
-
-	
+    FragColor = vec4((ambient + diffuse + specular) * colour, 1.0f); // Final result.
+	FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility);
 }
 

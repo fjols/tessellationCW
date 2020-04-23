@@ -140,7 +140,7 @@ int main()
 		shader.setMat4("model", model); // Model matrix.
 		shader.setVec3("viewPos", camera.Position); // Position of the camera.
 		shader.setVec3("eyePos", camera.Position); // Position of the camera.
-		shader.setFloat("heightFactor", height);
+		shader.setFloat("heightFactor", height); // Height factor.
 
 		glm::vec3 matColour;
 		matColour.x = sin(glfwGetTime() * 2.0f);
