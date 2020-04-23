@@ -3,7 +3,11 @@ out vec4 FragColor;
 
 
 in vec3 gNormals ;
-in vec3 gWorldPos_FS_in ;
+in vec3 gFragPos ;
+in float heightFactorG;
+
+
+in float heightG;
 
 
 struct Material {
@@ -25,45 +29,13 @@ uniform sampler2D texture1;
 uniform DirLight dirLight;
 uniform Material mat ;
 uniform vec3 viewPos ;
-uniform float heightFactor;
 
 
 void main()
 {   
-    float height = gWorldPos_FS_in.y / 100;
-	vec4 green = vec4(0.3, 0.35, 0.15, 0.0);
-	vec3 red = vec3(0.7, 0.0, 0.0);
-	vec4 grey = vec4(0.5, 0.4, 0.5, 0.0);
-    
-    vec4 brown = vec4(0.61, 0.36, 0.0, 0.0);
-    vec3 white = vec3(0.7, 0.7, 0.7);
-
-	vec3 colour;
-
-	if(height > -0.1)
-	{
-		colour = vec3(mix(green, grey, smoothstep(0.3, 0.6, height)).rgb);
-        //colour = red;
-	}
-   else if(height > -0.15)
-	{
-       colour = vec3(mix(brown, grey, smoothstep(0.6, 0.8, height)).rgb);
-       //colour = brown;
-	}
-	//else if(height > 0.8)
-	///{
-	//	//colour = vec3(mix(white, grey, smoothstep(0.8, 1.0, height)).rgb);
-   //colour = white;
-   //}
-	else
-	{
-		//colour = vec3(mix(green, grey, smoothstep(0.25f, 1.0, height)).rgb);
-		colour = vec3(0.8f, 0.8f, 0.8f);
-	}
-
-     vec3 viewDir = normalize(viewPos - gWorldPos_FS_in);
+     vec3 viewDir = normalize(viewPos -  gFragPos);
 	 vec3 norm = normalize(gNormals);
-	 vec3 ambient = dirLight.ambient * colour;     
+	 vec3 ambient = dirLight.ambient * mat.ambient;     
      vec3 lightDir = normalize(-dirLight.direction);
     // diffuse shading
     float diff = max(dot(norm, dirLight.direction), 0.0);
@@ -72,8 +44,41 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
     // combine results
    
-    vec3 diffuse  = dirLight.diffuse  * (diff * colour);
-    vec3 specular = dirLight.specular * (spec * colour);
+    vec3 diffuse  = dirLight.diffuse  * (diff * mat.diffuse);
+    vec3 specular = dirLight.specular * (spec * mat.specular);
+
+	float height = heightG / heightFactorG;
+
+	vec3 lightGray = vec3(0.82f, 0.82f, 0.82f);
+	vec3 gray = vec3(0.5f, 0.4f, 0.5f);
+    vec3 darkGray = vec3(0.26f, 0.26f, 0.26f);
+
+    vec3 blue = vec3(0.1f, 0.1f, 0.8f);
+    vec3 green = vec3(0.1f, 0.8f, 0.1f);
+    vec3 darkGreen = vec3(0.1f, 0.3f, 0.1f);
+
+	vec3 colour;
+
+	if(height < 0.5f)
+	{
+		colour = vec3(mix(blue, darkGreen, smoothstep(0.01f, 0.5f, height)).rgb);
+		//colour = gray;
+	}
+	else if(height < 0.8)
+	{
+		colour = vec3(mix(darkGreen, gray, smoothstep(0.55f, 0.8f, height)).rgb);
+		//colour = green;
+	}
+	else
+	{
+		colour = gray;
+	}
+	
+
+	//else
+	//{
+	//	colour = gray;
+	//}
 	
 
     FragColor = vec4((ambient + diffuse + specular) * colour, 1.0f);

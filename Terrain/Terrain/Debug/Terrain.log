@@ -1,1 +1,25 @@
-﻿  Terrain.vcxproj -> C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\Terrain.exe
+﻿  Source.cpp
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(117): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(146): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(147): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(148): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(215): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(216): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(220): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(221): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(223): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(224): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charlie.charlie-san\desktop\code\tesscw\tessellationcw\terrain\terrain\src\source.cpp(252): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Terrain.vcxproj -> C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\Terrain.exe

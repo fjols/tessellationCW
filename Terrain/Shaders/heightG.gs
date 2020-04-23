@@ -5,9 +5,15 @@ vec3 getNormal() ;
 
 in vec3 posES[] ;
 in vec3 normES[] ;
+in float heightFactorTE[];
+in vec2 texCoordsTE[];
+in float heightTE[];
 
 out vec3 gNormals ;
-out vec3 gWorldPos_FS_in ;
+out vec3 gFragPos ;
+out vec2 gTexCoords;
+out float heightFactorG;
+out float heightG;
 
 
 void main()
@@ -16,8 +22,11 @@ void main()
    for(int i = 0 ; i < 3; i++)
    {
       gl_Position = gl_in[i].gl_Position ;
-      gWorldPos_FS_in = posES[i] ;
+      gFragPos = posES[i] ;
+	  gTexCoords = texCoordsTE[i];
       gNormals = normES[i];    
+	  heightFactorG = heightFactorTE[i];
+	  heightG = heightTE[i];
       EmitVertex() ;
   }
      EndPrimitive() ;

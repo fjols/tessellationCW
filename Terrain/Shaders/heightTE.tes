@@ -24,7 +24,10 @@ in vec2 texCoordsTC[];
 // pass along the interpolated values
 out vec3 normES ;
 out vec3 posES ;
+out float heightFactorTE;
 out vec2 texCoordsTE;
+
+out float heightTE;
 
 
 void main()
@@ -33,8 +36,8 @@ void main()
     // use 3D because they are in three dimensions; 2D also included for uv texture coordinates
 
    normES = interpolate3D(normTC[0], normTC[1], normTC[2]) ;
-   vec3 posES = interpolate3D(posTC[0], posTC[1], posTC[2]) ;
-   vec2 texCoordsTE = interpolate2D(texCoordsTC[0], texCoordsTC[1], texCoordsTC[2]);
+   posES = interpolate3D(posTC[0], posTC[1], posTC[2]) ;
+   texCoordsTE = interpolate2D(texCoordsTC[0], texCoordsTC[1], texCoordsTC[2]);
 
    // transform vertex to clip space  - NOTE: WE NEED TO DO IT HERE NOW and not in vertex shader
 
@@ -48,9 +51,12 @@ void main()
   normals = normalize(normals);
   normES = normals;
 
+  heightFactorTE = heightFactor;
+
   float height = (texture(heightMap, texCoordsTE).x);
-  posES.y = height * 100;
-  gl_Position = projection * view * vec4(posES, 1.0);
+  posES.y = height * heightFactor;
+  heightTE = posES.y;
+  gl_Position = projection * view * model * vec4(posES, 1.0);
 } 
 
 

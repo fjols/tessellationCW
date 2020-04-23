@@ -22,12 +22,16 @@
 // settings
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 900;
+GLfloat RED = 1.0f;
+GLfloat GREEN = 1.0f;
+GLfloat BLUE = 1.0f;
 glm::vec3 dirLightPos(0.1f, 0.6f, 0.2f);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
+void setFBOcolour();
 unsigned int loadTexture(char const * path);
 //unsigned int loadTexture2(char const * path);
 void setVAO(vector <float> vertices);
@@ -39,13 +43,17 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
 //arrays
-unsigned int VBO, VAO;
+unsigned int VBO, VAO, quadVBO_, FBO;
+unsigned int textureColourBuffer;
+unsigned int textureDepthBuffer;
 
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-float height = 10.0f;
+float height = 100.0f;
+
+
 
 int main()
 {
@@ -71,9 +79,6 @@ int main()
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
 
 	glm::vec2 uv1(0.0f, 1.0f);
 	glm::vec2 uv2(0.0f, 0.0f);
@@ -91,6 +96,7 @@ int main()
 
 	// simple vertex and fragment shader - add your own tess and geo shader
 	Shader shader("..\\shaders\\heightV.vs", "..\\shaders\\heightF.fs", "..\\shaders\\heightG.gs", "..\\shaders\\heightTC.tcs", "..\\shaders\\heightTE.tes");
+	//Shader depthShader("..\\shaders\\depth.vs", "..\\shaders\\depthFrag.fs");
 
 	unsigned int heightMap = loadTexture("..\\resources\\heightMap.png");
 
@@ -111,15 +117,19 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
+		float near_plane = 0.1f, far_plane = 1000.0f, orthSize = 250.0f;
 		processInput(window);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 		glBindTexture(GL_TEXTURE_2D, heightMap);
 		glActiveTexture(GL_TEXTURE1);
-
+		glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+		shader.use();
+		glEnable(GL_DEPTH_TEST);
+		glClearColor(RED, GREEN, BLUE, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(VAO);
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1200.0f);
 		glm::mat4 view = camera.GetViewMatrix();
@@ -157,6 +167,7 @@ int main()
 		glDrawArrays(GL_PATCHES, 0, vertices.size() / 3);
 		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) 
 		  camera.printCameraCoords();
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -216,6 +227,21 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 }
 
 
+void setFBOcolour()
+{
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+	glGenTextures(1, &textureColourBuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColourBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, textureColourBuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColourBuffer, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 
 
