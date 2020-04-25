@@ -41,8 +41,8 @@ void main()
     // diffuse shading
     float diff = max(dot(norm, dirLight.direction), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-dirLight.direction, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(norm, halfwayDir), 0.0), mat.shininess);
     // combine results
    
     vec3 diffuse  = dirLight.diffuse  * (diff * mat.diffuse);
@@ -54,28 +54,29 @@ void main()
 	vec3 gray = vec3(0.5f, 0.4f, 0.5f);
     vec3 darkGray = vec3(0.26f, 0.26f, 0.26f);
 
-    vec3 blue = vec3(0.1f, 0.1f, 0.8f);
-    vec3 green = vec3(0.1f, 0.8f, 0.1f);
-    vec3 darkGreen = vec3(0.1f, 0.3f, 0.1f);
+    vec3 blue = vec3(0.1f, 0.1f, 0.7f);
+    vec3 green = vec3(0.1f, 0.7f, 0.1f);
+    vec3 darkGreen = vec3(0.1f, 0.2f, 0.1f);
 
 	vec3 colour;
 
-	if(height < 0.5f) // If height is less than 0.5 then do this colour.
+	if(height < 0.4f) // If height is less than 0.4 then do this colour.
 	{
 		colour = vec3(mix(blue, darkGreen, smoothstep(0.01f, 0.5f, height)).rgb);
-		//colour = gray;
 	}
-	else if(height < 0.8) // If height is less than 0.8 then do this colour.
+	else if(height < 0.7f) // If height is less than 0.8 then do this colour.
 	{
-		colour = vec3(mix(darkGreen, gray, smoothstep(0.55f, 0.8f, height)).rgb);
-		//colour = green;
+		colour = vec3(mix(darkGreen, gray, smoothstep(0.40f, 0.8f, height)).rgb);
 	}
-	else
+	else // If the height value does not fit in either if statement then set it to gray.
 	{
 		colour = gray;
 	}
+
+	vec3 lighting = vec3(ambient + diffuse + specular);
+	lighting = pow(lighting, vec3(1.0/2/2));
 	
-    FragColor = vec4((ambient + diffuse + specular) * colour, 1.0f); // Final result.
+    FragColor = vec4((lighting) * colour, 1.0f); // Final result.
 	FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility);
 }
 

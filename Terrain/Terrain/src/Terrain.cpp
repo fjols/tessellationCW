@@ -16,7 +16,6 @@ Terrain::Terrain() {
 	height = 100;
 	stepSize = 10;
 	makeVertices(&vertices);
-
 }
 
 
