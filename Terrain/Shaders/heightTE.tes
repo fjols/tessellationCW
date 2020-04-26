@@ -31,40 +31,79 @@ out vec2 texCoordsTE;
 out float heightTE;
 out float visibility;
 
+float hash(float n) // From the "Terrain Generation in OpenGL" powerpoint from Blackboard.
+{
+	return fract(sin(n) * 753.5453123);
+}
+
+float snoise(float x, float y, float z) // From the "Terrain Generation in OpenGL" powerpoint from Blackboard.
+{
+	vec3 p = floor(vec3(x, y, z));
+	vec3 f = fract(vec3(x, y, z));
+	f = f * f * (3.0f - (2.0f * f));
+	float n = p.x + p.y * 157.0f + 113.0f * p.z;
+	return mix(mix(mix(hash(n), hash(n + 1.0f), f.x),
+	mix(hash(n + 157.0f), hash(n + 158.0f), f.x), f.y),
+	mix(mix(hash(n + 113.0f), hash(n + 114.0f), f.x), mix(hash(n + 270.0f), hash(n + 271.0f), f.x), f.y), f.z);
+}
+
+float cycleOctaves(vec3 position, int numOfOctaves) // From the "Terrain Generation in OpenGL" powerpoint from Blackboard.
+{
+	float total = 0.0f;
+	float maxAmplitude = 0.0f;
+	float amplitude = 100.f;
+	float frequency = 0.010f;
+
+	for(int i = 0; i < numOfOctaves; i++)
+	{
+		float x = position.x * frequency;
+		float z = position.z * frequency;
+		total += snoise(x, 0.1f, z) * amplitude;
+		maxAmplitude += amplitude;
+		frequency *= 2.0f;
+		amplitude /= 2.0f;
+	}
+	return total / maxAmplitude;
+}
 
 void main()
 {
-    // interpolate the normal and xyz position using the linear interpolation function
-    // use 3D because they are in three dimensions; 2D also included for uv texture coordinates
-
-   normES = interpolate3D(normTC[0], normTC[1], normTC[2]) ;
-   posES = interpolate3D(posTC[0], posTC[1], posTC[2]) ;
+	// Interpolate these values so they can be passed along the pipeline.
+   normES = interpolate3D(normTC[0], normTC[1], normTC[2]);
+   posES = interpolate3D(posTC[0], posTC[1], posTC[2]);
    texCoordsTE = interpolate2D(texCoordsTC[0], texCoordsTC[1], texCoordsTC[2]);
 
-   // transform vertex to clip space  - NOTE: WE NEED TO DO IT HERE NOW and not in vertex shader
 
-  // NICE NORMALS
-  float right = (textureOffset(heightMap, texCoordsTE, ivec2(1, 0)).r)*heightFactor;
-  float left = (textureOffset(heightMap, texCoordsTE, ivec2(-1, 0)).r)*heightFactor;
-  float up = (textureOffset(heightMap, texCoordsTE, ivec2(0, 1)).r)*heightFactor;
-  float down = (textureOffset(heightMap, texCoordsTE, ivec2(0, -1)).r)*heightFactor;
+  // Central Difference method normals for heightmap generated height. Will keep these here incase I want to use a heightmap in the future.
+  //float right = (textureOffset(heightMap, texCoordsTE, ivec2(1, 0)).r)*heightFactor;
+  //float left = (textureOffset(heightMap, texCoordsTE, ivec2(-1, 0)).r)*heightFactor;
+  //float up = (textureOffset(heightMap, texCoordsTE, ivec2(0, 1)).r)*heightFactor;
+  //float down = (textureOffset(heightMap, texCoordsTE, ivec2(0, -1)).r)*heightFactor;
+
+  // Central Difference method normals for perlin noise generated height.
+  float right = cycleOctaves(vec3(posES.x + 1.0f, posES.y, posES.z), 8) * heightFactor;
+  float left = cycleOctaves(vec3(posES.x - 1.0f, posES.y, posES.z), 8) * heightFactor;
+  float up = cycleOctaves(vec3(posES.x, posES.y, posES.z + 1.0f), 8) * heightFactor;
+  float down = cycleOctaves(vec3(posES.x, posES.y, posES.z - 1.0f), 8) * heightFactor;
 
   vec3 normals = vec3((left-right), 2.0, (up - down));
   normals = normalize(normals);
   normES = normals;
 
+ // float height = (texture(heightMap, texCoordsTE).x); // Generate height value using height map.
+  //posES.y = height * heightFactor; // Offset the position on the y axis of posES.
+
+  posES.y = cycleOctaves(posES, 25) * heightFactor; // Generate height using Simplex noise.
+  heightTE = posES.y; // Store this value and pass it along pipeline.
   heightFactorTE = heightFactor; // Set the height factor value to the data that will be passed along the pipeline.
 
-  float height = (texture(heightMap, texCoordsTE).x); // Generate height value using height map.
-  posES.y = height * heightFactor; // Offset the position on the y axis of posES.
-  heightTE = posES.y; // Store this value and pass it along pipeline.
-
-  float gradient = 0.8f;
+  // Fog
+  float gradient = 0.6f;
   float density = 0.0025f;
 
-  float distanceFromCamera = distance(eyePos, posES);
-  visibility = exp(-pow((distanceFromCamera * density), gradient));
-  visibility = clamp(visibility, 0.0f, 1.0f);
+  float distanceFromCamera = distance(eyePos, posES); // Get the distance from the camera.
+  visibility = exp(-pow((distanceFromCamera * density), gradient)); // Further away from the camera means more fog.
+  visibility = clamp(visibility, 0.0f, 1.0f); // Make this value between 0.0 and 1.0.
 
   gl_Position = projection * view * model * vec4(posES, 1.0);
 } 

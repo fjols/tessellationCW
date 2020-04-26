@@ -74,7 +74,6 @@ void main()
 	}
 
 	vec3 lighting = vec3(ambient + diffuse + specular);
-	lighting = pow(lighting, vec3(1.0/2/2));
 	
     FragColor = vec4((lighting) * colour, 1.0f); // Final result.
 	FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility);
