@@ -102,8 +102,8 @@ void main()
   heightFactorTE = heightFactor; // Set the height factor value to the data that will be passed along the pipeline.
 
   // Fog
-  float gradient = 0.6f;
-  float density = 0.0025f;
+  float gradient = 0.8f;
+  float density = 0.005f;
 
   float distanceFromCamera = distance(eyePos, posES); // Get the distance from the camera.
   visibility = exp(-pow((distanceFromCamera * density), gradient)); // Further away from the camera means more fog.

@@ -99,7 +99,7 @@ int main()
 	};
 
 	// simple vertex and fragment shader - add your own tess and geo shader
-	Shader shader("..\\shaders\\heightV.vs", "..\\shaders\\heightF.fs", "..\\shaders\\heightG.gs", "..\\shaders\\heightTC.tcs", "..\\shaders\\heightTE.tes");
+	Shader shader("..\\shaders\\vertex.vs", "..\\shaders\\fragment.fs", "..\\shaders\\geometry.gs", "..\\shaders\\tessControl.tcs", "..\\shaders\\tessEval.tes");
 	//Shader depthShader("..\\shaders\\depth.vs", "..\\shaders\\depthFrag.fs");
 	Shader shadowMapShader("..\\shaders\\shadow.vs", "..\\shaders\\shadow.fs");
 
@@ -160,10 +160,6 @@ int main()
 		lightView = glm::lookAt(dirLightPos, glm::vec3(250.0f, 125.0f, 250.0f), glm::vec3(0.0, 1.0, 0.0));
 		lightSpaceMatrix = lightProjection * lightView;
 
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glViewport(700, 700, 724, 724);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//depthShader.use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureDepthBuffer);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -188,14 +184,6 @@ int main()
 		shader.setVec3("eyePos", camera.Position); // Position of the camera.
 		shader.setFloat("heightFactor", height); // Height factor.
 
-		glm::vec3 matColour;
-		matColour.x = sin(glfwGetTime() * 2.0f);
-		matColour.y = sin(glfwGetTime() * 0.7f);
-		matColour.z = sin(glfwGetTime() * 1.3f);
-
-		glm::vec3 diffuseColour = matColour * glm::vec3(0.9f);
-		glm::vec3 ambientColour = matColour * glm::vec3(0.5f);
-
 		//light properties
 		shader.setVec3("dirLight.direction", dirLightPos); // Direction of the light.
 		shader.setVec3("dirLight.ambient", 1.0f, 1.0f, 1.0f); // Ambient lighting.
@@ -217,26 +205,14 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glViewport(0, 0, shadowWidth, shadowHeight);
 		glEnable(GL_DEPTH_TEST);
-		//glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader.use();
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
 
 		// Render scene
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-		{
-			shader.setBool("gammaCorrection", true);
-		}
-		else
-		{
-			shader.setBool("gammaCorrection", false);
-		}
 
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

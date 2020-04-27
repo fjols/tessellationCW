@@ -32,7 +32,6 @@ uniform DirLight dirLight;
 uniform sampler2D shadowMap;
 uniform Material mat ;
 uniform vec3 viewPos ;
-uniform bool gammaCorrection; // Turn on if gamma correction should be on.
 
 
 void main()
@@ -99,7 +98,7 @@ float calculateShadows(vec4 fragPosSpace)
 	}
 
 	vec2 texelSize = 1.0f / textureSize(shadowMap, 0); // Get the size of a texel.
-	
+
 	for(int i = -1; i < 2; i++)
 	{
 		for(int j = -1; j < 2; j++)
