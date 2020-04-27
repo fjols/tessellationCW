@@ -6,6 +6,7 @@ layout(triangles, fractional_even_spacing, ccw) in;
 // forward declare functions to perfrom interpolation with the barycentric coordinates from the Primitive Generator
 vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2) ;
 vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2) ;
+vec4 interpolate4D(vec4 v0, vec4 v1, vec4 v2);
 
 
 // unifrom matrices to perform transformations
@@ -21,12 +22,14 @@ uniform vec3 eyePos;
 in vec3 posTC[] ;
 in vec3 normTC[] ;
 in vec2 texCoordsTC[];
+in vec4 fragPosLightSpaceTC[];
 
 // pass along the interpolated values
 out vec3 normES ;
 out vec3 posES ;
 out float heightFactorTE;
 out vec2 texCoordsTE;
+out vec4 fragPosLightSpaceTE;
 
 out float heightTE;
 out float visibility;
@@ -50,9 +53,9 @@ float snoise(float x, float y, float z) // From the "Terrain Generation in OpenG
 float cycleOctaves(vec3 position, int numOfOctaves) // From the "Terrain Generation in OpenGL" powerpoint from Blackboard.
 {
 	float total = 0.0f;
-	float maxAmplitude = 0.0f;
-	float amplitude = 100.f;
-	float frequency = 0.010f;
+	float maxAmplitude = 0.0f; // The maximum amplitude.
+	float amplitude = 100.f; // Amplitude of the octaves.
+	float frequency = 0.010f; // Frequency of the octaves.
 
 	for(int i = 0; i < numOfOctaves; i++)
 	{
@@ -72,6 +75,7 @@ void main()
    normES = interpolate3D(normTC[0], normTC[1], normTC[2]);
    posES = interpolate3D(posTC[0], posTC[1], posTC[2]);
    texCoordsTE = interpolate2D(texCoordsTC[0], texCoordsTC[1], texCoordsTC[2]);
+   fragPosLightSpaceTE = interpolate4D(fragPosLightSpaceTC[0], fragPosLightSpaceTC[1], fragPosLightSpaceTC[2]);
 
 
   // Central Difference method normals for heightmap generated height. Will keep these here incase I want to use a heightmap in the future.
@@ -118,5 +122,10 @@ vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
 vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)
 {
    	return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
+}
+
+vec4 interpolate4D(vec4 v0, vec4 v1, vec4 v2)
+{
+	return vec4(gl_TessCoord.x) * v0 + vec4(gl_TessCoord.y) * v1 + vec4(gl_TessCoord.z) * v2;
 }
 

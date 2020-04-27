@@ -9,6 +9,7 @@ in float heightFactorTE[];
 in vec2 texCoordsTE[];
 in float heightTE[];
 in float visibility[];
+in vec4 fragPosLightSpaceTE[];
 
 out vec3 gNormals ;
 out vec3 gFragPos ;
@@ -16,6 +17,7 @@ out vec2 gTexCoords;
 out float heightFactorG;
 out float heightG;
 out float gVisibility;
+out vec4 gFragPosLightSpace;
 
 
 void main()
@@ -30,6 +32,7 @@ void main()
 	  heightFactorG = heightFactorTE[i];
 	  heightG = heightTE[i];
 	  gVisibility = visibility[i];
+	  gFragPosLightSpace = fragPosLightSpaceTE[i];
       EmitVertex() ;
   }
      EndPrimitive() ;

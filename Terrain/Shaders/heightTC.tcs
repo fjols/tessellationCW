@@ -4,7 +4,7 @@
 
 
 #version 450 core
-layout (vertices =3) out;
+layout (vertices = 3) out;
 
 
 // vectors stored as arrays - each patch has three vertices, each with an xyz pos and xyz norm value 
@@ -15,10 +15,12 @@ uniform vec3 eyePos;
 in vec3 posVS[] ;
 in vec3 normVS[] ;
 in vec2 texCoords[];
+in vec4 fragPosLightSpace[];
 
 out vec3 posTC[] ;
 out vec3 normTC[] ;
 out vec2 texCoordsTC[];
+out vec4 fragPosLightSpaceTC[];
 
 float GetTessLevel(float, float);
 
@@ -48,6 +50,7 @@ void main()
    posTC[gl_InvocationID]  = posVS[gl_InvocationID] ;
    normTC[gl_InvocationID] = normVS[gl_InvocationID] ;
    texCoordsTC[gl_InvocationID] = texCoords[gl_InvocationID];
+   fragPosLightSpaceTC[gl_InvocationID] = fragPosLightSpace[gl_InvocationID];
 }
 
 float GetTessLevel(float dist1, float dist2)

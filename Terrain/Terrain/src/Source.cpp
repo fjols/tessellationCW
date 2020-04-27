@@ -35,6 +35,9 @@ void setFBOcolour();
 unsigned int loadTexture(char const * path);
 //unsigned int loadTexture2(char const * path);
 void setVAO(vector <float> vertices);
+void setRBO();
+void setFBOdepth();
+void renderQuad();
 
 // camera
 Camera camera(glm::vec3(260,50,300));
@@ -46,6 +49,7 @@ bool firstMouse = true;
 unsigned int VBO, VAO, quadVBO_, FBO;
 unsigned int textureColourBuffer;
 unsigned int textureDepthBuffer;
+unsigned int quadVAO = 0, quadVBO;
 
 // timing
 float deltaTime = 0.0f;
@@ -97,18 +101,45 @@ int main()
 	// simple vertex and fragment shader - add your own tess and geo shader
 	Shader shader("..\\shaders\\heightV.vs", "..\\shaders\\heightF.fs", "..\\shaders\\heightG.gs", "..\\shaders\\heightTC.tcs", "..\\shaders\\heightTE.tes");
 	//Shader depthShader("..\\shaders\\depth.vs", "..\\shaders\\depthFrag.fs");
+	Shader shadowMapShader("..\\shaders\\shadow.vs", "..\\shaders\\shadow.fs");
+
+	const unsigned int shadowWidth = 1024, shadowHeight = 1024;
+	unsigned int depthMapFBO;
+	glGenFramebuffers(1, &depthMapFBO);
+
+	unsigned int depthMap;
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	unsigned int heightMap = loadTexture("..\\resources\\heightMap.png");
 
 	shader.use();
-	shader.setInt("texture1", 0);
+	//shader.setInt("texture1", 0);
 
 	//Terrain Constructor ; number of grids in width, number of grids in height, gridSize
 	Terrain terrain(100, 100,10);
 	std::vector<float> vertices= terrain.getVertices();
 	setVAO(vertices);
 
-	
+
+	//setFBOdepth();
+
+
+
+	//glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+	shader.setInt("shadowMap", 0);
 
 
 	while (!glfwWindowShouldClose(window))
@@ -117,11 +148,26 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		float near_plane = 0.1f, far_plane = 1000.0f, orthSize = 250.0f;
 		processInput(window);
 
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glm::mat4 lightProjection, lightView;
+		glm::mat4 lightSpaceMatrix = glm::mat4(1.0f);
+		float near_plane = 0.1f, far_plane = 1000.0f, orthSize = 250.0f;
 
+		dirLightPos.y = 400.0f;
+		dirLightPos.z = 500.0f;
+		lightProjection = glm::ortho(-orthSize, orthSize, -orthSize, orthSize, near_plane, far_plane);
+		lightView = glm::lookAt(dirLightPos, glm::vec3(250.0f, 125.0f, 250.0f), glm::vec3(0.0, 1.0, 0.0));
+		lightSpaceMatrix = lightProjection * lightView;
+
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glViewport(700, 700, 724, 724);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//depthShader.use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureDepthBuffer);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		renderQuad();
 
 		glBindTexture(GL_TEXTURE_2D, heightMap);
 		glActiveTexture(GL_TEXTURE1);
@@ -160,6 +206,37 @@ int main()
 		shader.setVec3("mat.diffuse", 1.0f, 1.0f, 1.0f); // Diffuse colour of the material.
 		shader.setVec3("mat.specular", 1.0f, 1.0f, 1.0f); // Specular colour of the material.
 		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
+		shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+		// Shadows
+
+		shadowMapShader.use();
+		shadowMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+		shadowMapShader.setMat4("model", model);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glViewport(0, 0, shadowWidth, shadowHeight);
+		glEnable(GL_DEPTH_TEST);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		shader.use();
+		glBindVertexArray(VAO);
+		//glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
+
+		// Render scene
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+		if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+		{
+			shader.setBool("gammaCorrection", true);
+		}
+		else
+		{
+			shader.setBool("gammaCorrection", false);
+		}
+
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) // If the L button is pressed, change polygon mode to GL_FILL from GL_LINE.
@@ -243,7 +320,62 @@ void setFBOcolour()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void renderQuad()
+{
+	if (quadVAO == 0)
+	{
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+		// setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+}
 
+void setFBOdepth()
+{
+	glGenFramebuffers(1, &FBO);
+	//Depth texture.
+	glGenTextures(1, &textureDepthBuffer);
+	glBindTexture(GL_TEXTURE_2D, textureDepthBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SCR_HEIGHT, SCR_WIDTH, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	// Texture parameters for sampling and repeating.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Attach depth texture as FBO depth buffer.
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT, GL_TEXTURE_2D, textureDepthBuffer, 0);
+	// Using GL_NONE as not using colour buffer.
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void setRBO()
+{
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+}
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------

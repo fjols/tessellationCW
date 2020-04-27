@@ -1,11 +1,13 @@
 #version 330 core
 out vec4 FragColor;
 
+float calculateShadows(vec4 fragPosSpace);
 
 in vec3 gNormals ;
 in vec3 gFragPos ;
 in float heightFactorG;
 in float gVisibility;
+in vec4 gFragPosLightSpace;
 
 
 in float heightG;
@@ -26,10 +28,11 @@ struct DirLight {
     vec3 specular;
 }; 
 
-uniform sampler2D texture1;
 uniform DirLight dirLight;
+uniform sampler2D shadowMap;
 uniform Material mat ;
 uniform vec3 viewPos ;
+uniform bool gammaCorrection; // Turn on if gamma correction should be on.
 
 
 void main()
@@ -73,9 +76,33 @@ void main()
 		colour = gray;
 	}
 
-	vec3 lighting = vec3(ambient + diffuse + specular);
-	
-    FragColor = vec4((lighting) * colour, 1.0f); // Final result.
-	FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility);
+	float shadow = calculateShadows(gFragPosLightSpace);
+
+	//vec3 lighting = vec3(ambient + diffuse + specular, 1.0f);
+
+	//if(gammaCorrection) // If gamma correction is true
+	//{
+	//	lighting = pow(lighting, vec3(1.0/2.2)); // Apply the gamma correction
+	////	FragColor = vec4((lighting) * colour, 1.0f); // Apply the lighting.	
+	//	FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility); // Apply the fog.
+	//}
+	//else
+	//{
+		FragColor = vec4((ambient + (1 - shadow)*(diffuse + specular)) * colour, 1.0f); // Apply the lighting.
+		FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility); // Apply the fog.
+	//}
 }
 
+float calculateShadows(vec4 fragPosSpace)
+{
+	vec3 projCoords = gFragPosLightSpace.xyz / gFragPosLightSpace.w;
+	projCoords = projCoords * 0.5 + 0.5;
+	float closestDepth = texture(shadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+	float shadow = 0;
+	if(currentDepth > closestDepth)
+	{
+		shadow = 1;
+	}
+	return shadow;
+}

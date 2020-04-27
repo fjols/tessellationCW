@@ -1,17 +1,13 @@
-﻿  PerlinNoise.cpp
-glfw3.lib(context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(context.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(init.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(init.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(input.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(input.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(monitor.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(monitor.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(vulkan.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(vulkan.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(window.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(window.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_init.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_init.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_joystick.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_monitor.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_time.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_time.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_thread.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_thread.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(win32_window.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(win32_window.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(wgl_context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(wgl_context.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(egl_context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(egl_context.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB 'glfw.pdb' was not found with 'glfw3.lib(osmesa_context.obj)' or at 'C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\glfw.pdb'; linking object as if no debug info
-  Terrain.vcxproj -> C:\Users\Charlie.CHARLIE-SAN\Desktop\Code\TESSCW\tessellationCW\Terrain\Debug\Terrain.exe
+﻿  Source.cpp
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(148): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(192): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(193): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(194): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(292): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(293): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(297): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(298): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(300): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(301): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\charl\desktop\tesscw\tessellationcw\terrain\terrain\src\source.cpp(384): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Terrain.vcxproj -> C:\Users\charl\Desktop\tesscw\tessellationCW\Terrain\Debug\Terrain.exe
