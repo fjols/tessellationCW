@@ -22,9 +22,9 @@
 // settings
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 900;
-GLfloat RED = 1.0f;
-GLfloat GREEN = 1.0f;
-GLfloat BLUE = 1.0f;
+GLfloat RED = 0.7f;
+GLfloat GREEN = 0.7f;
+GLfloat BLUE = 0.7f;
 glm::vec3 dirLightPos(0.1f, 0.6f, 0.2f);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -103,7 +103,7 @@ int main()
 	//Shader depthShader("..\\shaders\\depth.vs", "..\\shaders\\depthFrag.fs");
 	Shader shadowMapShader("..\\shaders\\shadow.vs", "..\\shaders\\shadow.fs");
 
-	const unsigned int shadowWidth = 1024, shadowHeight = 1024;
+	const unsigned int shadowWidth = 4026, shadowHeight = 4026;
 	unsigned int depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
 
@@ -154,8 +154,8 @@ int main()
 		glm::mat4 lightSpaceMatrix = glm::mat4(1.0f);
 		float near_plane = 0.1f, far_plane = 1000.0f, orthSize = 250.0f;
 
-		dirLightPos.y = 400.0f;
-		dirLightPos.z = 500.0f;
+		//dirLightPos.x = sin(glfwGetTime()) * 10.0f;
+		//dirLightPos.z = sin(glfwGetTime()) * 10.0f;
 		lightProjection = glm::ortho(-orthSize, orthSize, -orthSize, orthSize, near_plane, far_plane);
 		lightView = glm::lookAt(dirLightPos, glm::vec3(250.0f, 125.0f, 250.0f), glm::vec3(0.0, 1.0, 0.0));
 		lightSpaceMatrix = lightProjection * lightView;
@@ -207,6 +207,7 @@ int main()
 		shader.setVec3("mat.specular", 1.0f, 1.0f, 1.0f); // Specular colour of the material.
 		shader.setFloat("mat.shininess", 0.85f); // Shininess of the material.
 		shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+		shader.setInt("shadowMap", 0);
 
 		// Shadows
 
@@ -216,7 +217,7 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glViewport(0, 0, shadowWidth, shadowHeight);
 		glEnable(GL_DEPTH_TEST);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		//glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader.use();
 		glBindVertexArray(VAO);

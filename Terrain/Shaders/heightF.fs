@@ -76,33 +76,45 @@ void main()
 		colour = gray;
 	}
 
-	float shadow = calculateShadows(gFragPosLightSpace);
+	float shadow = calculateShadows(gFragPosLightSpace); // Calculate the shadows.
 
-	//vec3 lighting = vec3(ambient + diffuse + specular, 1.0f);
 
-	//if(gammaCorrection) // If gamma correction is true
-	//{
-	//	lighting = pow(lighting, vec3(1.0/2.2)); // Apply the gamma correction
-	////	FragColor = vec4((lighting) * colour, 1.0f); // Apply the lighting.	
-	//	FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility); // Apply the fog.
-	//}
-	//else
-	//{
-		FragColor = vec4((ambient + (1 - shadow)*(diffuse + specular)) * colour, 1.0f); // Apply the lighting.
-		FragColor = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), FragColor, gVisibility); // Apply the fog.
-	//}
+	FragColor = vec4((ambient + (1 - shadow)*(diffuse + specular)) * colour, 1.0f); // Apply the lighting.
+	FragColor = mix(vec4(0.7f, 0.7f, 0.7f, 1.0f), FragColor, gVisibility); // Apply the fog.
+
 }
 
 float calculateShadows(vec4 fragPosSpace)
 {
-	vec3 projCoords = gFragPosLightSpace.xyz / gFragPosLightSpace.w;
-	projCoords = projCoords * 0.5 + 0.5;
+	vec3 projCoords = gFragPosLightSpace.xyz / gFragPosLightSpace.w; // Currently has range [-1, 1]
+	float bias = 0.015f;
+	projCoords = projCoords * 0.5 + 0.5; // Get the [0, 1] range.
 	float closestDepth = texture(shadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
 	float shadow = 0;
-	if(currentDepth > closestDepth)
+
+	if(currentDepth - bias > closestDepth)
 	{
 		shadow = 1;
+	}
+
+	vec2 texelSize = 1.0f / textureSize(shadowMap, 0); // Get the size of a texel.
+	
+	for(int i = -1; i < 2; i++)
+	{
+		for(int j = -1; j < 2; j++)
+		{
+			float pcf = texture(shadowMap, projCoords.xy + vec2(i, j) * texelSize).r; // Percentage closer filtering. Magnify shadow by resampling it.
+			if(currentDepth - bias > pcf)
+			{
+				shadow += 1;
+			}
+		}
+	}
+	shadow = shadow / 9.0f;
+	if(projCoords.z > 1.0f)
+	{
+		shadow = 0.0f;
 	}
 	return shadow;
 }

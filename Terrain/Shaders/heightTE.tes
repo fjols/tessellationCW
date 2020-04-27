@@ -55,7 +55,7 @@ float cycleOctaves(vec3 position, int numOfOctaves) // From the "Terrain Generat
 	float total = 0.0f;
 	float maxAmplitude = 0.0f; // The maximum amplitude.
 	float amplitude = 100.f; // Amplitude of the octaves.
-	float frequency = 0.010f; // Frequency of the octaves.
+	float frequency = 0.020f; // Frequency of the octaves.
 
 	for(int i = 0; i < numOfOctaves; i++)
 	{
@@ -97,7 +97,7 @@ void main()
  // float height = (texture(heightMap, texCoordsTE).x); // Generate height value using height map.
   //posES.y = height * heightFactor; // Offset the position on the y axis of posES.
 
-  posES.y = cycleOctaves(posES, 25) * heightFactor; // Generate height using Simplex noise.
+  posES.y = cycleOctaves(posES, 40) * heightFactor; // Generate height using Simplex noise.
   heightTE = posES.y; // Store this value and pass it along pipeline.
   heightFactorTE = heightFactor; // Set the height factor value to the data that will be passed along the pipeline.
 
